@@ -104,10 +104,104 @@ jobs:
 
 
 
+
+
+  terraform-plan-test:
+    name: Terraform Plan Test
+    runs-on: ubuntu-latest
+    needs: sign-off-development
+    outputs:
+      plan_file: ${{ steps.setplan.outputs.plan_file }}
+    
+    steps:
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID_TEST }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID_TEST }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID_TEST }} 
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        run: terraform init -backend-config="backend_test.conf"
+
+      - name: Terraform Plan
+        id: setplan
+        run: |
+          PLAN_NAME="tfplan-test-${GITHUB_RUN_ID}"
+          terraform plan -out=${PLAN_NAME}.binary -var-file=var_test.tfvars
+          terraform show -no-color ${PLAN_NAME}.binary
+          echo "plan_file=${PLAN_NAME}" >> $GITHUB_OUTPUT
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraform-plan-test
+          path: |
+            ${{ steps.setplan.outputs.plan_file }}.binary
+
+  terraform-apply-test:
+    name: Terraform Apply Test
+    runs-on: ubuntu-latest
+    needs: terraform-plan-test
+    environment:
+      name: test  # <- das Environment mit Approval!
+    steps:
+      - name: Approval Gate
+        run: echo "Waiting for approval..."
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID_TEST }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID_TEST }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID_TEST }} 
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Download Plan Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: terraform-plan-test
+
+      - name: Terraform Init
+        run: terraform init -backend-config="backend_test.conf"
+
+      - name: Terraform Apply
+        run: |
+          terraform apply "tfplan-test-${GITHUB_RUN_ID}.binary"
+
+      - name: Cleanup Plan Files
+        run: rm -f "tfplan-test-${GITHUB_RUN_ID}.binary"
+
+  sign-off-test:
+    name: Sign Off on Test
+    runs-on: ubuntu-latest
+    needs: terraform-apply-test
+    environment:
+      name: test  # <- das Environment mit Approval!
+    steps:
+      - name: Approval Gate
+        run: echo "Sign off on production complete. Deployment successful!"
+
+
+
+
+
+
   terraform-plan-production:
     name: Terraform Plan Production
     runs-on: ubuntu-latest
-    needs: sign-off-development
+    needs: sign-off-test
     outputs:
       plan_file: ${{ steps.setplan.outputs.plan_file }}
     
