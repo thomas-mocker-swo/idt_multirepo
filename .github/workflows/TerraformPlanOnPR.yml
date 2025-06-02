@@ -48,7 +48,6 @@ jobs:
   terraform-plan-test:
     name: Terraform Plan Test
     runs-on: ubuntu-latest
-    needs: terraform-plan-dev
       
     steps:
       - name: Azure Login
