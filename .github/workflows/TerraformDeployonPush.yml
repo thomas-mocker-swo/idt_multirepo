@@ -1,6 +1,6 @@
 # File: .github/workflows/TerraformDeployAction.yml
 
-name: 'Terraform Deploy on Pull Request'
+name: 'Terraform Deploy on Push'
 
 on:
   push:
