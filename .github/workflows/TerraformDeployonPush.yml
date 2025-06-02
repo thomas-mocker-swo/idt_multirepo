@@ -87,7 +87,7 @@ jobs:
 
       - name: Terraform Apply
         run: |
-          terraform apply "tfplan-dev$-{GITHUB_RUN_ID}.binary"
+          terraform apply "tfplan-dev-${GITHUB_RUN_ID}.binary"
 
       - name: Cleanup Plan Files
         run: rm -f "tfplan-dev-${GITHUB_RUN_ID}.binary"
