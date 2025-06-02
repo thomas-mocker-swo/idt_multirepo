@@ -1,6 +1,6 @@
 # File: .github/workflows/TerraformDeployAction.yml
 
-name: 'Terraform Deploy on Pull Request'
+name: 'Terraform Deploy on Push'
 
 on:
   push:
@@ -87,7 +87,7 @@ jobs:
 
       - name: Terraform Apply
         run: |
-          terraform apply "tfplan-dev$-{GITHUB_RUN_ID}.binary"
+          terraform apply "tfplan-dev-${GITHUB_RUN_ID}.binary"
 
       - name: Cleanup Plan Files
         run: rm -f "tfplan-dev-${GITHUB_RUN_ID}.binary"
