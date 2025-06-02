@@ -16,7 +16,7 @@ permissions:
 
 
 jobs:
-terraform-plan-development:
+  terraform-plan-development:
     name: Terraform Plan Development
     runs-on: ubuntu-latest
     outputs:
