@@ -49,6 +49,7 @@ jobs:
   terraform-plan-test:
     name: Terraform Plan Test
     runs-on: ubuntu-latest
+    needs: terraform-plan-dev
       
     steps:
       - name: Azure Login
@@ -80,6 +81,7 @@ jobs:
   terraform-plan-prod:
     name: Terraform Plan Production
     runs-on: ubuntu-latest
+    needs: terraform-plan-test
       
     steps:
       - name: Azure Login
