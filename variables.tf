@@ -35,3 +35,8 @@ variable "tags" {
   default     = {}
 }
 
+variable "environment" {
+  type        = string
+  description = "The environment for which the resources are being created (e.g., development, production)."
+}
+
