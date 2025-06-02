@@ -47,7 +47,7 @@ jobs:
 
 
   terraform-plan-test:
-    name: Terraform Plan Development
+    name: Terraform Plan Test
     runs-on: ubuntu-latest
       
     steps:
