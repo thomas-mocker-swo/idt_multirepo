@@ -54,8 +54,8 @@ jobs:
           path: |
             ${{ steps.setplan.outputs.plan_file }}.binary
 
-  wait-for-approval-development:
-    name: Wait for Manual Approval
+  terraform-apply-development:
+    name: Terraform Apply Development
     runs-on: ubuntu-latest
     needs: terraform-plan-development
     environment:
@@ -64,11 +64,6 @@ jobs:
       - name: Approval Gate
         run: echo "Waiting for approval..."
 
-  terraform-apply-development:
-    name: Terraform Apply
-    runs-on: ubuntu-latest
-    needs: wait-for-approval-development
-    steps:
       - name: Azure Login
         uses: azure/login@v2
         with:
@@ -92,7 +87,7 @@ jobs:
 
       - name: Terraform Apply
         run: |
-          terraform apply "tfplan-dev${GITHUB_RUN_ID}.binary"
+          terraform apply "tfplan-dev$-{GITHUB_RUN_ID}.binary"
 
       - name: Cleanup Plan Files
         run: rm -f "tfplan-dev-${GITHUB_RUN_ID}.binary"
@@ -110,7 +105,7 @@ jobs:
 
 
   terraform-plan-production:
-    name: Terraform Plan
+    name: Terraform Plan Production
     runs-on: ubuntu-latest
     needs: sign-off-development
     outputs:
@@ -148,8 +143,8 @@ jobs:
           path: |
             ${{ steps.setplan.outputs.plan_file }}.binary
 
-  wait-for-approval-production:
-    name: Wait for Manual Approval
+  terraform-apply-production:
+    name: Terraform Apply Production
     runs-on: ubuntu-latest
     needs: terraform-plan-production
     environment:
@@ -158,11 +153,6 @@ jobs:
       - name: Approval Gate
         run: echo "Waiting for approval..."
 
-  terraform-apply-production:
-    name: Terraform Apply
-    runs-on: ubuntu-latest
-    needs: wait-for-approval-production
-    steps:
       - name: Azure Login
         uses: azure/login@v2
         with:
