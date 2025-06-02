@@ -1,1 +1,1 @@
-# idt_multirepo
+# idt_subscription
