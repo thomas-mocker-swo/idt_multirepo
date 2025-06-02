@@ -49,6 +49,7 @@ jobs:
   terraform-plan-prod:
     name: Terraform Plan
     runs-on: ubuntu-latest
+    needs: terraform-plan-dev
       
     steps:
       - name: Azure Login
