@@ -97,7 +97,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: terraform-apply-development
     environment:
-      name: production  # <- das Environment mit Approval!
+      name: development  # <- das Environment mit Approval!
     steps:
       - name: Approval Gate
         run: echo "Sign off on production complete. Deployment successful!"
